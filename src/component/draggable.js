@@ -11,7 +11,6 @@ function buildAttribute(object, propName, value) {
 }
 
 function computeVmIndex(vnodes, element) {
-  console.log(vnodes, element);
   return vnodes.map(elt => elt.elm).indexOf(element);
 }
 

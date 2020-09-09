@@ -125,7 +125,6 @@ import {
   toRefs,
   ref,
   nextTick,
-  getCurrentInstance
 } from "@vue/composition-api";
 import FcForm from "./FcForm";
 import { uniqueId } from "lodash";
@@ -138,7 +137,7 @@ export default defineComponent({
     FcForm
   },
   setup() {
-    const vm = getCurrentInstance()
+    // const vm = getCurrentInstance()
     const fcForm = ref('')
     const state = reactive({
       components: [
@@ -173,6 +172,17 @@ export default defineComponent({
     // });
 
 
+    const useCheckParentId = (evt, rule) => {
+      const parentId = evt.to.dataset.originId
+      console.log(parentId)
+      fcForm.value.fApi.append(rule, parentId, true)
+
+      nextTick(() => {
+        fcForm.value.fApi.refresh(true)
+      })
+    }
+
+
 
     const useDraggableOptions = (elements) => {
       if (elements.length > 0) {
@@ -185,22 +195,24 @@ export default defineComponent({
             swapThreshold: 0.65,
             onAdd: function (evt) {
               /// 先获取到元素
-              const element = evt.item._underlying_vm_;
-              if (element === undefined) {
+              const rule = evt.item._underlying_vm_;
+              if (rule === undefined) {
                 return;
               }
-              if (element._id === "drag_key_id_5") {
-                fcForm.value.fApi.append(element, "drag_key_id_3", true)
-              } else {
-                fcForm.value.fApi.append(element, "drag_key_id_1", true)
-              }
-
+              useCheckParentId(evt, rule)
               setTimeout(() => {
                 const wrappers = document.querySelectorAll('.form-create .fc-drag-list')
                 useDraggableOptions(wrappers)
               }, 400)
-              console.log(state.rules)
-              console.log(vm)
+            },
+            onEnd: function(evt) {
+              console.log(evt)
+              const rule = evt.item._underlying_vm_;
+              if (rule === undefined) {
+                return;
+              }
+              console.log(evt,' on-end ', state.rules)
+              useCheckParentId(evt, rule)
             }
           });
         })
@@ -217,6 +229,7 @@ export default defineComponent({
 
     nextTick(() => {
       /// init draggable component
+      const id = useUniqueId()
       const initDraggableItem = reactive({
         type: "fc-drag-main",
         children: [
@@ -227,7 +240,10 @@ export default defineComponent({
               tag: "div"
             },
             children: [],
-            name: useUniqueId(),
+            attrs: {
+              'data-origin-id': id
+            },
+            name: id,
             class: "fc-drag-transition fc-drag-list",
           }
         ],
@@ -270,6 +286,7 @@ export default defineComponent({
        *
        */
       // const otherList = ref([]);
+      const id = useUniqueId()
       return [{
         type: "fc-drag-main",
         children: [
@@ -280,7 +297,10 @@ export default defineComponent({
               tag: "div"
             },
             children: [],
-            name: useUniqueId(),
+            attrs: {
+              'data-origin-id': id
+            },
+            name: id,
             class: "fc-drag-transition fc-drag-list",
           }
         ],
@@ -309,7 +329,6 @@ export default defineComponent({
     const useInput = item => {
       item["type"] = "el-input";
       item["field"] = useAutoField();
-      item["children"] = [];
     };
 
     /// format rules
