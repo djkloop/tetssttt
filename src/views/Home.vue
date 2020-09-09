@@ -69,12 +69,16 @@ ul {
       &-grid {
         &-row {
           min-height: 60px;
-          border: 1px dashed #d9d9d9;
-          background: white;
+
           .el-col,
           .fc-drag-main,
           .fc-drag-list {
             min-height: 60px;
+          }
+
+          .el-col {
+            border: 1px dashed #d9d9d9;
+            background: white;
           }
         }
       }
@@ -185,17 +189,18 @@ export default defineComponent({
               if (element === undefined) {
                 return;
               }
-              if (state.rules[0].children[0].length === 0) {
-                fcForm.value.fApi.append(element, "drag_key_id_1", true)
-              } else {
+              if (element._id === "drag_key_id_5") {
                 fcForm.value.fApi.append(element, "drag_key_id_3", true)
+              } else {
+                fcForm.value.fApi.append(element, "drag_key_id_1", true)
               }
 
               setTimeout(() => {
                 const wrappers = document.querySelectorAll('.form-create .fc-drag-list')
                 useDraggableOptions(wrappers)
               }, 400)
-              console.log(fcForm, element, vm)
+              console.log(state.rules)
+              console.log(vm)
             }
           });
         })
@@ -227,7 +232,7 @@ export default defineComponent({
           }
         ],
       });
-      state.rules.push(initDraggableItem);
+      fcForm.value.fApi.append(initDraggableItem)
       setTimeout(() => {
         const wrappers = document.querySelectorAll('.form-create .fc-drag-transition')
         useDraggableOptions(wrappers)
@@ -265,7 +270,7 @@ export default defineComponent({
        *
        */
       // const otherList = ref([]);
-      return {
+      return [{
         type: "fc-drag-main",
         children: [
           {
@@ -279,7 +284,7 @@ export default defineComponent({
             class: "fc-drag-transition fc-drag-list",
           }
         ],
-      };
+      }];
     };
 
     /// transfer - row
@@ -290,12 +295,12 @@ export default defineComponent({
           {
             type: "el-col",
             props: { span: 12 },
-            children: [useWrapperDrag()]
+            children: useWrapperDrag()
           },
           {
             type: "el-col",
             props: { span: 12 },
-            children: [useWrapperDrag()]
+            children: useWrapperDrag()
           }
         ]);
     };
@@ -304,6 +309,7 @@ export default defineComponent({
     const useInput = item => {
       item["type"] = "el-input";
       item["field"] = useAutoField();
+      item["children"] = [];
     };
 
     /// format rules

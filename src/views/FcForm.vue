@@ -2,7 +2,7 @@
  * @Author        : djkloop
  * @Date          : 2020-09-04 17:30:40
  * @LastEditors   : djkloop
- * @LastEditTime  : 2020-09-09 12:18:23
+ * @LastEditTime  : 2020-09-09 14:15:00
  * @Description   : generate form with form-create
  * @FilePath      : /vd/src/views/FcForm.vue
 -->
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, reactive, toRefs, watch } from "@vue/composition-api";
+import { defineComponent, reactive, toRefs } from "@vue/composition-api";
 
 export default defineComponent({
   name: "fc-form",
@@ -54,7 +54,7 @@ export default defineComponent({
       default: () => []
     }
   },
-  setup(props) {
+  setup() {
     /// json to form with form-create
     /// http://www.form-create.com/v2/element-ui/components/input.html
     const state = reactive({
@@ -66,16 +66,6 @@ export default defineComponent({
         resetBtn: false
       }
     });
-
-    console.log(props.rules)
-
-    watch(() => props.rules, (rules, preRules) => {
-      console.log(rules, preRules, ' ---- ')
-    }, {
-      immediate: false,
-      deep: true
-    })
-
 
     return {
       ...toRefs(state)
