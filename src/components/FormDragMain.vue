@@ -14,10 +14,8 @@
 
 <script>
 export default {
-  name: 'fc-drag-main'
-}
+  name: "fc-drag-main"
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -124,7 +124,7 @@ import {
   reactive,
   toRefs,
   ref,
-  nextTick,
+  nextTick
 } from "@vue/composition-api";
 import FcForm from "./FcForm";
 import { uniqueId } from "lodash";
@@ -138,7 +138,7 @@ export default defineComponent({
   },
   setup() {
     // const vm = getCurrentInstance()
-    const fcForm = ref('')
+    const fcForm = ref("");
     const state = reactive({
       components: [
         {
@@ -171,20 +171,17 @@ export default defineComponent({
     //   animation: 180
     // });
 
-
     const useCheckParentId = (evt, rule) => {
-      const parentId = evt.to.dataset.originId
-      console.log(parentId)
-      fcForm.value.fApi.append(rule, parentId, true)
+      const parentId = evt.to.dataset.originId;
+      console.log(parentId, evt);
+      fcForm.value.fApi.append(rule, parentId, true);
 
       nextTick(() => {
-        fcForm.value.fApi.refresh(true)
-      })
-    }
+        fcForm.value.fApi.refresh(true);
+      });
+    };
 
-
-
-    const useDraggableOptions = (elements) => {
+    const useDraggableOptions = elements => {
       if (elements.length > 0) {
         elements.forEach(element => {
           new Sortable(element, {
@@ -193,29 +190,32 @@ export default defineComponent({
             animation: 180,
             fallbackOnBody: true,
             swapThreshold: 0.65,
-            onAdd: function (evt) {
+            onAdd: function(evt) {
               /// 先获取到元素
               const rule = evt.item._underlying_vm_;
+              console.log(evt.item._underlying_vm_, " add - rule ");
               if (rule === undefined) {
                 return;
               }
-              useCheckParentId(evt, rule)
+              useCheckParentId(evt, rule);
               setTimeout(() => {
-                const wrappers = document.querySelectorAll('.form-create .fc-drag-list')
-                useDraggableOptions(wrappers)
-              }, 400)
+                const wrappers = document.querySelectorAll(
+                  ".form-create .fc-drag-list"
+                );
+                useDraggableOptions(wrappers);
+              }, 400);
             },
             onEnd: function(evt) {
-              console.log(evt)
               const rule = evt.item._underlying_vm_;
+              console.log(evt.item._underlying_vm_, " end - rule ");
               if (rule === undefined) {
                 return;
               }
-              console.log(evt,' on-end ', state.rules)
-              useCheckParentId(evt, rule)
+              console.log(evt, " on-end ", state.rules);
+              useCheckParentId(evt, rule);
             }
           });
-        })
+        });
       } else {
         new Sortable(elements, {
           group: "dragGroup",
@@ -225,11 +225,11 @@ export default defineComponent({
           swapThreshold: 0.65
         });
       }
-    }
+    };
 
     nextTick(() => {
       /// init draggable component
-      const id = useUniqueId()
+      const id = useUniqueId();
       const initDraggableItem = reactive({
         type: "fc-drag-main",
         children: [
@@ -241,18 +241,20 @@ export default defineComponent({
             },
             children: [],
             attrs: {
-              'data-origin-id': id
+              "data-origin-id": id
             },
             name: id,
-            class: "fc-drag-transition fc-drag-list",
+            class: "fc-drag-transition fc-drag-list"
           }
-        ],
+        ]
       });
-      fcForm.value.fApi.append(initDraggableItem)
+      fcForm.value.fApi.append(initDraggableItem);
       setTimeout(() => {
-        const wrappers = document.querySelectorAll('.form-create .fc-drag-transition')
-        useDraggableOptions(wrappers)
-      }, 1000)
+        const wrappers = document.querySelectorAll(
+          ".form-create .fc-drag-transition"
+        );
+        useDraggableOptions(wrappers);
+      }, 1000);
     });
 
     /// generate unique id
@@ -286,25 +288,27 @@ export default defineComponent({
        *
        */
       // const otherList = ref([]);
-      const id = useUniqueId()
-      return [{
-        type: "fc-drag-main",
-        children: [
-          {
-            type: "transition-group",
-            props: {
-              name: "fc-drag-list",
-              tag: "div"
-            },
-            children: [],
-            attrs: {
-              'data-origin-id': id
-            },
-            name: id,
-            class: "fc-drag-transition fc-drag-list",
-          }
-        ],
-      }];
+      const id = useUniqueId();
+      return [
+        {
+          type: "fc-drag-main",
+          children: [
+            {
+              type: "transition-group",
+              props: {
+                name: "fc-drag-list",
+                tag: "div"
+              },
+              children: [],
+              attrs: {
+                "data-origin-id": id
+              },
+              name: id,
+              class: "fc-drag-transition fc-drag-list"
+            }
+          ]
+        }
+      ];
     };
 
     /// transfer - row
