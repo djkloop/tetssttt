@@ -191,7 +191,7 @@ export default defineComponent({
             fallbackOnBody: true,
             swapThreshold: 0.65,
             onAdd: function(evt) {
-              /// 先获取到元素
+              /// 获取到对应的rule
               const rule = evt.item._underlying_vm_;
               console.log(evt.item._underlying_vm_, " add - rule ");
               if (rule === undefined) {
@@ -206,8 +206,12 @@ export default defineComponent({
               }, 400);
             },
             onEnd: function(evt) {
+              /// 如果是在主区域内来回切换的话，需要在这里进行更新form-create的规则【rules】
+              /// 但是这里在主区域的时候已经是真实的dom... 所以获取不到 _underlying_vm_ 这个参数
+              /// 所以就更新不了form-create的规则
               const rule = evt.item._underlying_vm_;
-              console.log(evt.item._underlying_vm_, " end - rule ");
+              console.log(evt.item._underlying_vm_, " end - rule ", evt);
+              fcForm.value.fApi.refresh(true);
               if (rule === undefined) {
                 return;
               }
